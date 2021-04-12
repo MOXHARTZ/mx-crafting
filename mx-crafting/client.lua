@@ -22,8 +22,8 @@ menu = function()
                     count =  v.inform.count
                 })
             end
-			ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'billing', {
-				title    = ('MX-Crafting'),
+			ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'craft', {
+				title    = 'Crafting',
 				align    = 'top-right',
 				elements = elements
 			}, function(data, menu)
@@ -72,7 +72,7 @@ Citizen.CreateThread(function()
     if textstatus == true then
         if dst <= 8 then
             perform = false
-            DrawText3DMX(Cfg.pos.x, Cfg.pos.y, Cfg.pos.z, "~r~[E]~s~ Craft Menu")
+            DrawText3D(Cfg.pos.x, Cfg.pos.y, Cfg.pos.z, "~r~[E]~s~ Craft Menu")
         end
         if dst <= 2 and IsControlJustPressed(0, 38) then
             menu()
@@ -119,7 +119,7 @@ if Cfg.blip then
     end)
 end
 
-function DrawText3DMX(x, y, z, text)
+function DrawText3D(x, y, z, text)
 	SetTextScale(0.35, 0.35)
     SetTextFont(4)
     SetTextProportional(1)
