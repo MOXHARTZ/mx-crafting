@@ -1,19 +1,19 @@
 Cfg = {}
 
-Cfg.blip = true                 -- Blip olsun mu
-Cfg.ped = true                  -- Ped olsun mu
-Cfg.pos = {x = 1000.32, y = -103.89, z = 73.95, h = 121.65}     -- Pedin ve blipin yeri.
+Cfg.blip = true                 -- true active false deactive
+Cfg.ped = true                  -- true active false deactive
+Cfg.pos = {x = 1000.32, y = -103.89, z = 73.95, h = 121.65}     -- Ped, blip and craft coords.
 
 MX = {
     ['Pistol'] = {
         inform = {
-            label = "Silah craftla",    -- Menüde gözükecek olan isim
-            value = "pistol",           -- Bir değer girin özel harf olmasın.
-            CraftedItem = "WEAPON_COMBATPISTOL",                -- Craftlayınca vericek item
-            count = 1,                                          -- Craftlayınca kaç tane verilsin
+            label = "Weapon Craft",    -- Menu name
+            value = "pistol",           -- any value
+            CraftedItem = "WEAPON_COMBATPISTOL",                -- Get craft item
+            count = 1,                                          -- Craft item count
             Craft = { -- Maksimum 4 eşya arttırabilirsiniz !
                 [1] = {
-                    reqitem = "demir",                              -- Craftlamak için gerekli item
+                    reqitem = "demir",                              -- Req items. MAX 4 !
                     count = 1,
                 },
                 [2] = {
@@ -24,7 +24,7 @@ MX = {
                     reqitem = "armor",
                     count = 1,
                 }
-                -- [4] = {                                      -- Maksimum 4 !
+                -- [4] = {                                      
                 --     reqitem = "armor",
                 --     count = 1,
                 -- }
@@ -33,7 +33,7 @@ MX = {
     },
     ['Zırh'] = {
         inform = {
-            label = "Zırh craftla",
+            label = "Armor Craft",
             value = "armor",
             CraftedItem = "heavyarmor",
             count = 1,
