@@ -31,7 +31,7 @@ menu = function()
                     TriggerEvent("mythic_progbar:client:progress", {
                     name = "mx-crafting",
                     duration = 4000,
-                    label = "Eşya craftlıyorsun",
+                    label = "Crafting...",
                     useWhileDead = false,
                     canCancel = false,
                     controlDisables = {
@@ -72,7 +72,7 @@ Citizen.CreateThread(function()
     if textstatus == true then
         if dst <= 8 then
             perform = false
-            DrawText3DMX(Cfg.pos.x, Cfg.pos.y, Cfg.pos.z, "Esya craftlamak icin ~r~[E]~s~ bas")
+            DrawText3DMX(Cfg.pos.x, Cfg.pos.y, Cfg.pos.z, "~r~[E]~s~ Craft Menu")
         end
         if dst <= 2 and IsControlJustPressed(0, 38) then
             menu()
