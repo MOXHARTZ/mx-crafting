@@ -1,10 +1,10 @@
 What is this mx-crafting ?
 
-FOR ESX !
+> FOR ESX
 
-It provides an easy way to craft items.
-It's optimization is good.
-A maximum of 4 items may be required for an item. [It could be from 1 to 4.]
+- **It provides an easy way to craft items.**
+- **It's optimization is good.**
+- **A maximum of 4 items may be required for an item. [It could be from 1 to 4.]**
 
-- Requirements:
+Req:
 https://github.com/HalCroves/mythic_progbar
