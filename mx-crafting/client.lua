@@ -1,123 +1,154 @@
-ESX = nil
+ESX = nil local textstatus = true
 
 Citizen.CreateThread(function()
     while ESX == nil do
         TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
         Citizen.Wait(0)
     end
+    while ESX.GetPlayerData() == nil do
+        Citizen.Wait(100)
+    end
+    PlayerData = ESX.GetPlayerData()
 end)
 
-local textstatus = true
+RegisterNetEvent('esx:playerLoaded')
+AddEventHandler('esx:playerLoaded', function(playerData)
+    PlayerData = playerData
+end)
 
-menu = function()
-            ESX.UI.Menu.CloseAll()
-			local elements = {}
-            textstatus = false
-            for k,v in pairs(MX) do
-                table.insert(elements, {
-                    label  = v.inform.label,
-                    mx     = v.inform.value,
-                    craft = v.inform.Craft,
-                    craftedItem = v.inform.CraftedItem,
-                    count =  v.inform.count
-                })
-            end
-			ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'craft', {
-				title    = 'Crafting',
-				align    = 'top-right',
-				elements = elements
-			}, function(data, menu)
+RegisterNetEvent('esx:setJob')
+AddEventHandler('esx:setJob', function(jobInf)
+    PlayerData.job = jobInf
+end)
+
+Menu = function(index)
+    if index then
+        ESX.UI.Menu.CloseAll()
+	    local elements = {}
+        textstatus = false
+        for _,v in pairs(MX[index].CraftItems) do
+            table.insert(elements, {
+                label  = v.inform.label,
+                mx     = v.inform.value,
+                craft = v.inform.Craft,
+                craftedItem = v.inform.CraftedItem,
+                count =  v.inform.count,
+                anim = MX[index].config.animation
+            })
+        end
+	    ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'craft', {
+	    	title    = 'Crafting',
+	    	align    = 'top-right',
+	    	elements = elements
+	    }, function(data, menu)
                 menu.close()
-                    TriggerEvent("mythic_progbar:client:progress", {
-                    name = "mx-crafting",
-                    duration = 4000,
-                    label = "Crafting...",
-                    useWhileDead = false,
-                    canCancel = false,
-                    controlDisables = {
-                        disableMovement = true,
-                        disableCarMovement = true,
-                        disableMouse = false,
-                        disableCombat = true,
-                    },
-                    animation = {
-                        animDict = "amb@prop_human_bum_bin@base",
-                        anim = "base",
-                    },
-                    prop = {
-                        model = "",
-                    }
-                     }, function(status)
-                        if not status then
-                            TriggerServerEvent('mx-crafting:craft', #data.current.craft, data.current.craft, data.current.craftedItem, data.current.count)
-                            textstatus = true
-                            menu.close()
-                            ClearPedTasks(PlayerPedId())
-                        end
-                    end)
-                end, function(data, menu)
-                menu.close()
-                textstatus = true
-			end)
+                ESX.TriggerServerCallback('mx-crafting:hasItem', function(has) 
+                    if has then
+                        TriggerEvent("mythic_progbar:client:progress", {
+                            name = "mx-crafting",
+                            duration = 4000,
+                            label = "Crafting...",
+                            useWhileDead = false,
+                            canCancel = false,
+                            controlDisables = {
+                                disableMovement = true,
+                                disableCarMovement = true,
+                                disableMouse = false,
+                                disableCombat = true,
+                            },
+                            animation = {
+                                animDict = data.current.anim.animDict,
+                                anim = data.current.anim.anim,
+                            },
+                            prop = {
+                                model = "",
+                            }
+                             }, function(status)
+                                if not status then
+                                    TriggerServerEvent('mx-crafting:craft', data.current.craft, data.current.craftedItem, data.current.count)
+                                    textstatus = true
+                                    menu.close()
+                                    ClearPedTasks(PlayerPedId())
+                                end
+                        end)
+                    else
+                        textstatus = true 
+                    end
+                end, data.current.craft)
+            end, function(data, menu)
+            menu.close()
+            textstatus = true
+	    end)
+    end
 end
 
-local sleep = 2000
 Citizen.CreateThread(function()
     while true do
-        Citizen.Wait(sleep)
-        perform = true
+        local sleep = 1250
         local ped = PlayerPedId()
         local pedcoords = GetEntityCoords(ped)
-        local dst = GetDistanceBetweenCoords(pedcoords, Cfg.pos.x, Cfg.pos.y, Cfg.pos.z, true)
-    if textstatus == true then
-        if dst <= 8 then
-            perform = false
-            DrawText3D(Cfg.pos.x, Cfg.pos.y, Cfg.pos.z, "~r~[E]~s~ Craft Menu")
+        for i = 1, #MX do   
+            local dst = #(MX[i].config.coords - pedcoords)
+            if textstatus then
+                if dst <= 8.0 then
+                    if MX[i].config.jobReq then
+                        if PlayerData and PlayerData.job and PlayerData.job.name == MX[i].config.jobReq then
+                            sleep = 3
+                            DrawText3D(MX[i].config.coords.x, MX[i].config.coords.y, MX[i].config.coords.z, "~r~[E]~s~ Craft Menu")
+                            if MX[i].config.ped.active then
+                                DrawMarker(2, MX[i].config.ped.coords.x, MX[i].config.ped.coords.y, MX[i].config.ped.coords.z + 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 0.4, 0.2, 255, 255, 255, 255, 0, 0, 0, 1, 0, 0, 0)
+                            end
+                        end
+                    else
+                        sleep = 3
+                        DrawText3D(MX[i].config.coords.x, MX[i].config.coords.y, MX[i].config.coords.z, "~r~[E]~s~ Craft Menu")
+                        if MX[i].config.ped.active then
+                            DrawMarker(2, MX[i].config.ped.coords.x, MX[i].config.ped.coords.y, MX[i].config.ped.coords.z + 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 0.4, 0.2, 255, 255, 255, 255, 0, 0, 0, 1, 0, 0, 0)
+                        end
+                    end
+                end
+                if dst <= 2 and IsControlJustPressed(0, 38) then
+                    Menu(i)
+                end
+            end
         end
-        if dst <= 2 and IsControlJustPressed(0, 38) then
-            menu()
-        end
-    end
-
-        if perform then
-            sleep = 2000
-        end
-
-        if not perform then
-            sleep = 7
-        end
+        Citizen.Wait(sleep)
     end    
 end)
 
-if Cfg.ped then
-    Citizen.CreateThreadNow(function()
-           RequestModel(0x0703F106)
-           while not HasModelLoaded(0x0703F106) do
-               Wait(7)
-           end
+Citizen.CreateThread(function()
+    for i = 1, #MX do
+        if MX[i].config.ped.active then
+            local cf = MX[i].config.ped
+            RequestModel(cf.model)
+            while not HasModelLoaded(cf.model) do Citizen.Wait(3) end
+            local crafter = CreatePed(1, cf.model, cf.coords.x, cf.coords.y, cf.coords.z - 1, cf.h, 0, 0)
+            SetBlockingOfNonTemporaryEvents(crafter, true)
+            SetPedDiesWhenInjured(crafter, false)
+            SetPedCanPlayAmbientAnims(crafter, true)
+            SetPedCanRagdollFromPlayerImpact(crafter, false)
+            SetEntityInvincible(crafter, true)
+            FreezeEntityPosition(crafter, true)
+        end
+    end 
+end)
 
-           local crafter = CreatePed(1, 0x0703F106, Cfg.pos.x, Cfg.pos.y, Cfg.pos.z - 1, Cfg.pos.h, false, true)
-           SetBlockingOfNonTemporaryEvents(crafter, true)
-           SetPedDiesWhenInjured(crafter, false)
-           SetPedCanPlayAmbientAnims(crafter, true)
-           SetPedCanRagdollFromPlayerImpact(crafter, false)
-           SetEntityInvincible(crafter, true)
-           FreezeEntityPosition(crafter, true)
-    end)
-end
-
-if Cfg.blip then
-    Citizen.CreateThreadNow(function ()
+Citizen.CreateThread(function()
+    for i = 1, #MX do
+        if MX[i].config.blip.active then
+            local ff = MX[i].config.blip
             Citizen.Wait(5000)
-            bb = AddBlipForCoord(Cfg.pos.x, Cfg.pos.y, Cfg.pos.z)
-            SetBlipSprite(bb, 89)
-            SetBlipColour(bb, 1)
+            local blip = AddBlipForCoord(ff.coords)
+            SetBlipSprite(blip, ff.sprite)
+            SetBlipColour(blip, ff.color)
+            SetBlipScale(blip, ff.scale)
             BeginTextCommandSetBlipName("STRING")
-            AddTextComponentString("Crafter")
-            EndTextCommandSetBlipName(bb)
-            SetBlipAsShortRange(bb, true)
-    end)
-end
+            AddTextComponentString(ff.name)
+            EndTextCommandSetBlipName(blip)
+            SetBlipAsShortRange(blip, true)
+        end
+    end
+end)
 
 function DrawText3D(x, y, z, text)
 	SetTextScale(0.35, 0.35)
