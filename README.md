@@ -7,5 +7,12 @@ What is this mx-crafting ?
 - **Craft can be done in one place.**
 - **While crafting, a processing bar comes out.**
 
+> About the 2.0 update in Craft system:
+
+- You can now add as many req items as you want.
+- You can create as many craft locations as you want.
+- You can add or remove job requirements to craft.
+- You can adjust the animations in config.
+
 Req:
 https://github.com/HalCroves/mythic_progbar
