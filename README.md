@@ -16,3 +16,5 @@ What is this mx-crafting ?
 
 Req:
 https://github.com/HalCroves/mythic_progbar
+
+FOR SUPPORT: https://discord.gg/davU2SY
