@@ -60,9 +60,6 @@ Menu = function(index)
                                 animDict = data.current.anim.animDict,
                                 anim = data.current.anim.anim,
                             },
-                            prop = {
-                                model = "",
-                            }
                              }, function(status)
                                 if not status then
                                     TriggerServerEvent('mx-crafting:craft', data.current.craft, data.current.craftedItem, data.current.count)
